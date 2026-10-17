@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrowdCount — People Detection Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <div>
+        <p class="brand-name">CrowdCount</p>
+        <p class="brand-sub">YOLO11 adaptive people counting</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel ingest">
+      <h1>Analyze media</h1>
+      <p class="lede">Upload a photo or video, or start a live webcam session. Results appear in the dashboard.</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="upload" type="button">Upload</button>
+        <button class="tab" data-tab="webcam" type="button">Live webcam</button>
+      </div>
+
+      <div class="tab-panel active" id="panel-upload">
+        <label class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept="image/*,video/*" hidden />
+          <strong>Drop a photo or video</strong>
+          <span>or click to browse · JPG, PNG, MP4, MOV</span>
+        </label>
+        <div class="upload-meta" id="uploadMeta" hidden>
+          <p id="selectedFile"></p>
+          <button class="btn primary" id="uploadBtn" type="button">Count people</button>
+        </div>
+        <div class="progress" id="uploadProgress" hidden>
+          <div class="progress-bar" id="progressBar"></div>
+          <p id="progressText">Processing…</p>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-webcam">
+        <div class="webcam-stage">
+          <video id="webcamVideo" autoplay playsinline muted></video>
+          <canvas id="webcamOverlay"></canvas>
+        </div>
+        <div class="webcam-controls">
+          <button class="btn primary" id="startCamBtn" type="button">Start webcam</button>
+          <button class="btn ghost" id="stopCamBtn" type="button" disabled>Stop &amp; save</button>
+          <div class="live-count">
+            <span class="label">Live count</span>
+            <strong id="liveCount">—</strong>
+          </div>
+        </div>
+        <p class="hint">The camera stays live; boxes update as soon as each count returns. Photo/video uploads still use the larger YOLO11m model.</p>
+      </div>
+    </section>
+
+    <section class="panel dashboard">
+      <div class="dash-head">
+        <h2>Dashboard</h2>
+        <div class="stats" id="summaryStats">
+          <div class="stat">
+            <span>Sessions</span>
+            <strong id="statSessions">0</strong>
+          </div>
+          <div class="stat">
+            <span>Latest count</span>
+            <strong id="statLatest">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Preview</th>
+              <th>Source</th>
+              <th>File / session</th>
+              <th>People</th>
+              <th>Avg / Max</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody">
+            <tr class="empty-row">
+              <td colspan="7">No uploads yet. Add a photo, video, or webcam session.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="mediaModal" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mediaModalTitle">
+      <div class="modal-head">
+        <div>
+          <h3 id="mediaModalTitle">Preview</h3>
+          <p class="modal-meta" id="mediaModalMeta"></p>
+        </div>
+        <button class="btn ghost" type="button" data-close-modal>Close</button>
+      </div>
+      <div class="modal-body">
+        <video id="mediaPlayer" controls playsinline></video>
+        <img id="mediaImage" alt="Annotated result" hidden />
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
